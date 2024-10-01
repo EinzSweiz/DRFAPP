@@ -21,5 +21,6 @@ from products import urls as product_urls
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(api_urls, namespace='api')),
-    path('api/products/', include(product_urls, namespace='product'))
+    path('api/products/', include(product_urls, namespace='product')),
+    path('api/v2/', include('cfehome.routers'))
 ]

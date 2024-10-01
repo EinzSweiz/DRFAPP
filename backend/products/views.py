@@ -1,25 +1,38 @@
-from rest_framework import generics, mixins, permissions, authentication
+from rest_framework import generics
 from .models import Product
 from .serializers import ProductSerializer
 from rest_framework.response import Response
-from .permissions import StaffEditorPermissons
+from api.mixins import StaffEditorPermissionsMixin, UserQuerySetMixin
 
-
-class ProductListCreateAPIView(generics.ListCreateAPIView):
+class ProductListCreateAPIView(
+    StaffEditorPermissionsMixin,
+    UserQuerySetMixin,
+    generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    authentication_classes = [authentication.SessionAuthentication]
-    permission_classes = [permissions.IsAdminUser, StaffEditorPermissons]
+    user_field = 'user'
+    allow_staff_view = False
 
     def perform_create(self, serializer):
         title = serializer.validated_data.get('title')
-        content = serializer.validated_data.get('content')
+        content = serializer.validated_data.get('content') or None
         if content is None:
             content = title
-        serializer.save(content=content)
+        serializer.save(user=self.request.user, content=content)
+    
+    # def get_queryset(self, *args, **kwargs):
+    #     qs = super().get_queryset(*args, **kwargs)
+    #     request = self.request
+    #     user = request.user
+    #     if not user.is_authenticated:
+    #         return Product.objects.none()
+    #     return qs.filter(user=user)
 
 
-class ProductRetriveAPIView(generics.RetrieveAPIView):
+class ProductRetriveAPIView(
+    UserQuerySetMixin,
+    StaffEditorPermissionsMixin,
+    generics.RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'id'
@@ -29,12 +42,14 @@ class ProductRetriveAPIView(generics.RetrieveAPIView):
         if id is not None:
             return self.retrieve(request, *args, **kwargs)
         return Response({'detail': 'Error happened because of wrong ID'})
-class ProductUpdateAPIView(generics.UpdateAPIView):
+    
+class ProductUpdateAPIView(
+    UserQuerySetMixin,
+    StaffEditorPermissionsMixin,
+    generics.UpdateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'id'
-    authentication_classes = [authentication.SessionAuthentication]
-    permission_classes = [permissions.DjangoModelPermissions]
 
     def perform_update(self, serializer):
         instance = serializer.save()
@@ -42,7 +57,10 @@ class ProductUpdateAPIView(generics.UpdateAPIView):
             instance.content = instance.title
 
 
-class ProductDeleteAPIView(generics.DestroyAPIView):
+class ProductDeleteAPIView(
+    UserQuerySetMixin,
+    StaffEditorPermissionsMixin,
+    generics.DestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'id'
