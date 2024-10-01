@@ -22,4 +22,8 @@ if auth_response.status_code == 200:
 
     get_response = requests.get(endpoint, headers=headers)
 
-    pprint(get_response.json())
+    data = get_response.json()
+    next_url = data['next']
+    results = data['results']
+    print('next_url', next_url)
+    pprint(results)

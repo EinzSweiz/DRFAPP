@@ -8,9 +8,6 @@ class StaffEditorPermissionsMixin():
     ]
 
 
-
-
-
 class UserQuerySetMixin():
     user_field = 'user'
     allow_staff_view = False
