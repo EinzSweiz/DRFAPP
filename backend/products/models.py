@@ -1,9 +1,9 @@
 from django.db import models
 from django.conf import settings
 from django.db.models import Q
-
+import random
 User = settings.AUTH_USER_MODEL
-
+ALLOWED_TAGS = ['cars', 'electronics', 'internet', 'world']
 class ProductQuerySet(models.QuerySet):
     
     def is_public(self):
@@ -34,6 +34,9 @@ class Product(models.Model):
     def is_public(self):
         return self.public
 
+    def get_tag(self):
+        return random.choice(ALLOWED_TAGS)
+    
     @property
     def sale_price(self):
         return "%.2f" %(float(self.price) * 0.8)
