@@ -40,9 +40,11 @@ INSTALLED_APPS = [
     #myapps
     'api.apps.ApiConfig',
     'products.apps.ProductsConfig',
+    'search.apps.SearchConfig',
     #installed apps
     'rest_framework',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    'algoliasearch_django',
 ]
 
 MIDDLEWARE = [
@@ -139,4 +141,11 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 1
+}
+
+
+ALGOLIA = {
+  'APPLICATION_ID': '2AIQXEXBBK',
+  'API_KEY': 'e9022789b9c3295544c2beb2959afd44',
+  'INDEX_PREFIX': 'cfe'
 }

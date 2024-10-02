@@ -11,7 +11,7 @@ class ProductSerializer(serializers.ModelSerializer):
     owner = UserPublicSerializer(source='user', read_only=True)
     class Meta:
         model = Product
-        fields = ['owner','url','edit_url', 'id', 'title', 'content', 'price', 'sale_price', 'discount']
+        fields = ['owner','url','edit_url', 'id', 'title', 'content', 'price', 'sale_price', 'discount', 'public']
 
 
     # def validate_title(self, value):
